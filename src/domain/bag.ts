@@ -1,46 +1,6 @@
-export interface Bean {
-  id: string
-  roaster: string
-  name: string
-  species?: string | null
-  decaf: boolean
-  decafProcess?: string | null
-  country?: string | null
-  region?: string | null
-  producer?: string | null
-  variety?: string[] | null
-  altitude?: [number, number] | null
-  processing?: string | null
-  notes?: string | null
-  archived: boolean
-  createdAt: string
-  updatedAt: string
-  extras?: Record<string, unknown> | null
-}
+import type { Bean, BeanBatch } from '../api/decaid/types'
 
-export interface BeanBatch {
-  id: string
-  beanId: string
-  roastDate?: string | null
-  roastLevel?: string | null
-  harvestDate?: string | null
-  qualityScore?: number | null
-  price?: number | null
-  currency?: string | null
-  weight?: number | null
-  weightRemaining?: number | null
-  buyDate?: string | null
-  openDate?: string | null
-  bestBeforeDate?: string | null
-  freezeDate?: string | null
-  unfreezeDate?: string | null
-  frozen: boolean
-  archived: boolean
-  notes?: string | null
-  createdAt: string
-  updatedAt: string
-  extras?: Record<string, unknown> | null
-}
+export type { Bean, BeanBatch } from '../api/decaid/types'
 
 export interface Bag {
   bean: Bean
