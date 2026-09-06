@@ -20,7 +20,7 @@ interface CarouselDrag {
   moved: boolean
 }
 
-export function BrewingPanel({ profiles, activeProfileId, activeBag, settingsDisabled, demoMode = false, onUpdateProfile, onSelectProfile, onStartDemoBrew, onManageProfiles, onOpenBagPicker }: { profiles: BrewProfile[]; activeProfileId?: string; activeBag?: ActiveBag | null; settingsDisabled?: boolean; demoMode?: boolean; onUpdateProfile: (profileId: string, setting: EditableProfileSetting, value: number) => void; onSelectProfile: (profileId: string) => Promise<boolean>; onStartDemoBrew?: (profileId: string) => void; onManageProfiles: () => void; onOpenBagPicker: () => void }) {
+export function BrewingPanel({ profiles, activeProfileId, activeBag, activeBagRoastDate, settingsDisabled, demoMode = false, onUpdateProfile, onSelectProfile, onStartDemoBrew, onManageProfiles, onOpenBagPicker }: { profiles: BrewProfile[]; activeProfileId?: string; activeBag?: ActiveBag | null; activeBagRoastDate?: string | null; settingsDisabled?: boolean; demoMode?: boolean; onUpdateProfile: (profileId: string, setting: EditableProfileSetting, value: number) => void; onSelectProfile: (profileId: string) => Promise<boolean>; onStartDemoBrew?: (profileId: string) => void; onManageProfiles: () => void; onOpenBagPicker: () => void }) {
   const selectedIndex = profiles.findIndex((profile) => profile.id === activeProfileId)
   const fallbackIndex = profiles.findIndex((profile) => profile.id === 'adaptive-v2')
   const initialIndex = Math.max(0, selectedIndex >= 0 ? selectedIndex : fallbackIndex)
@@ -182,7 +182,7 @@ export function BrewingPanel({ profiles, activeProfileId, activeBag, settingsDis
       })}
     </div>
     <button className="manage-profiles" type="button" onClick={onManageProfiles}>See all profiles →</button>
-    <BagBar activeBag={activeBag} onOpen={onOpenBagPicker} />
+    <BagBar activeBag={activeBag} activeBagRoastDate={activeBagRoastDate} onOpen={onOpenBagPicker} />
     <div className="brew-metrics" aria-live="polite">
       <Metric metric={{ label: 'Temp.', value: activeProfile.temperature, unit: '°' }} edit={editProfileSetting('temperature')} />
       <Metric metric={{ label: 'Grind size', value: activeProfile.grindSetting }} edit={editProfileSetting('grindSetting')} />
