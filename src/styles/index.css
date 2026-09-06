@@ -503,3 +503,16 @@ body { min-width:0; min-height:0; background:#171717; }
 .fullscreen-prompt__primary{min-width:150px;height:44px;padding:0 20px;border-radius:24px;color:#0f0f0f;background:#53d68e;font-size:15px;font-weight:600;transition:background-color .18s ease,transform .18s ease}.fullscreen-prompt__primary:hover{background:#6bdf9d}.fullscreen-prompt__primary:active{transform:scale(.96)}.fullscreen-prompt__primary:focus-visible{outline:2px solid #d0d0d0;outline-offset:3px}
 .fullscreen-prompt__secondary{min-width:93px;height:44px;padding:0 18px;border-radius:24px;color:#d8d8d8;background:rgba(105,101,98,.72);font-size:15px;font-weight:600;transition:background-color .18s ease,transform .18s ease}.fullscreen-prompt__secondary:hover{background:rgba(124,118,114,.85)}.fullscreen-prompt__secondary:active{transform:scale(.96)}.fullscreen-prompt__secondary:focus-visible{outline:2px solid #d0d0d0;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.fullscreen-prompt-overlay,.fullscreen-prompt{animation:none}.fullscreen-prompt__primary,.fullscreen-prompt__secondary{transition:none}}
+.bag-bar { width: 100%; height: 52px; margin: 0 0 16px; padding: 0 8px 0 12px; border: 0; border-radius: 26px; background: rgba(255,255,255,.06); display: flex; align-items: center; gap: 12px; color: inherit; font: inherit; cursor: pointer; }
+.bag-bar:hover { background: rgba(255,255,255,.09); }
+.bag-bar--empty { color: #878787; }
+.bag-bar__icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; flex: none; }
+.bag-bar__icon--fresh { background: rgba(61,192,120,.16); }
+.bag-bar__icon--ok { background: rgba(216,184,77,.16); }
+.bag-bar__icon--stale { background: rgba(222,97,97,.16); }
+.bag-bar__text { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 6px; overflow: hidden; white-space: nowrap; }
+.bag-bar__label { color: #878787; font-size: 10px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
+.bag-bar__value { color: #fff; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+.bag-bar__sep { color: #5a5a5a; }
+.bag-bar__meta { color: #a9a9a9; font-size: 13px; font-weight: 500; }
+.bag-bar__chevron { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; flex: none; }
