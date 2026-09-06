@@ -17,7 +17,8 @@ export function useBagData(connection: DataConnection) {
   const loadedForConnection = useRef<DataConnection | null>(null)
 
   useEffect(() => {
-    if (connection !== 'connected' || loadedForConnection.current === connection) return
+    if (connection !== 'connected') { loadedForConnection.current = null; return }
+    if (loadedForConnection.current === connection) return
     loadedForConnection.current = connection
     setLoading(true)
     setError(null)
