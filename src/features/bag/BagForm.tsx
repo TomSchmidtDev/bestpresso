@@ -44,6 +44,7 @@ export function BagForm({ existing, existingRoasters, existingBeanNamesForRoaste
   const [unfreezeDate, setUnfreezeDate] = useState(toDateInputValue(existing?.batch.unfreezeDate))
   const [batchNotes, setBatchNotes] = useState(existing?.batch.notes ?? '')
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const beanNames = existingBeanNamesForRoaster(roaster)
   const canSave = roaster.trim().length > 0 && name.trim().length > 0 && !saving
@@ -51,6 +52,7 @@ export function BagForm({ existing, existingRoasters, existingBeanNamesForRoaste
   const handleSave = async () => {
     if (!canSave) return
     setSaving(true)
+    setSaveError(null)
     const varietyList = variety.split(',').map((entry) => entry.trim()).filter(Boolean)
     const altitude: [number, number] | null = altitudeMin.trim() && altitudeMax.trim() ? [Number(altitudeMin), Number(altitudeMax)] : null
     const beanFields = {
@@ -86,6 +88,8 @@ export function BagForm({ existing, existingRoasters, existingBeanNamesForRoaste
     }
     try {
       await onSave(beanFields as CreateBeanInput, beanFields, batchFields as CreateBeanBatchInput, batchFields)
+    } catch {
+      setSaveError('Could not save this bag. Please try again.')
     } finally {
       setSaving(false)
     }
@@ -96,6 +100,7 @@ export function BagForm({ existing, existingRoasters, existingBeanNamesForRoaste
       <header className="bag-form__header">
         <h2 id="bag-form-title">{existing ? 'Edit bag' : 'New bag'}</h2>
         <div className="bag-form__actions">
+          {saveError && <span className="bag-form__save-error" role="alert">{saveError}</span>}
           <button className="btn btn--ghost" type="button" onClick={onCancel} disabled={saving}>Cancel</button>
           <button className="btn btn--primary" type="button" onClick={() => void handleSave()} disabled={!canSave}>Save</button>
         </div>
@@ -105,12 +110,12 @@ export function BagForm({ existing, existingRoasters, existingBeanNamesForRoaste
           <div className="bag-form__grid2">
             <label className="bag-form__field">
               <span>Roaster</span>
-              <input list="bag-form-roasters" value={roaster} onChange={(event) => setRoaster(event.target.value)} placeholder="Enter or select roaster" />
+              <input type="text" list="bag-form-roasters" value={roaster} onChange={(event) => setRoaster(event.target.value)} placeholder="Enter or select roaster" />
               <datalist id="bag-form-roasters">{existingRoasters.map((candidate) => <option key={candidate} value={candidate} />)}</datalist>
             </label>
             <label className="bag-form__field">
               <span>Bean</span>
-              <input list="bag-form-beans" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter or select bean name" />
+              <input type="text" list="bag-form-beans" value={name} onChange={(event) => setName(event.target.value)} placeholder="Enter or select bean name" />
               <datalist id="bag-form-beans">{beanNames.map((candidate) => <option key={candidate} value={candidate} />)}</datalist>
             </label>
           </div>
