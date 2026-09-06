@@ -78,9 +78,16 @@ export interface PreviousShot {
   points?: LiveShotPoint[]
 }
 
+export interface ActiveBag {
+  beanBatchId: string
+  coffeeName: string
+  coffeeRoaster: string
+}
+
 export interface BrewingScreenModel {
   readiness: MachineReadiness
   activeProfileId?: string
+  activeBag?: ActiveBag | null
   utilities: MachineUtility[]
   profiles: BrewProfile[]
   previousShot: PreviousShot | null
