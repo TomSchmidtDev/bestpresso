@@ -9,6 +9,8 @@ import type { DecaidProfile, DecaidProfileRecord, DecaidWorkflowPatch, FavoriteA
 import { liveScaleDisplayWeight, liveShotYield, normalizedLiveScaleWeight, scaleConnectionIsActive, WATER_TANK_SENSOR_FULL_MM, waterTankLevelState } from '../../domain/brewing'
 import type { AvailableScale, BrewingScreenModel, DataConnection, EditableMachineSetting, EditableProfileSetting, LiveBrewState, LiveShotPoint, LiveUtilityOperation, MachineReadiness, PreviousShot, PreviousShotStatus, ScaleConnection, SettingFeedback, UtilityOperationKind } from '../../domain/brewing'
 import { brewingFixture, demoLiveBrewFixture } from '../../fixtures/brewingFixture'
+import { workflowContextForBag } from '../../domain/bag'
+import type { Bean, BeanBatch } from '../../domain/bag'
 import { scaleFixtureForKey } from '../../fixtures/scaleFixtures'
 import { cleaningRestorePatch, isCleaningSequenceRun, prepareCleaningProfileForEspressoStart, profileForCleaningShortcut } from '../cleaning/cleaningSequence'
 import { observePostShotWeight, reconciledShotYield, type YieldFinalizationState } from '../history/shotYieldFinalization'
@@ -1337,6 +1339,26 @@ export function useBrewingData() {
     }
   }
 
+  const selectBag = async (bean: Bean, batch: BeanBatch) => {
+    const context = workflowContextForBag(bean, batch)
+    if (connection === 'fixture') {
+      setModel((current) => ({ ...current, activeBag: context }))
+      return true
+    }
+    if (connection !== 'connected') {
+      showSettingFeedback({ status: 'error', message: 'Connect to Decaid before selecting a bag.' })
+      return false
+    }
+    try {
+      const workflow = await updateWorkflow({ context })
+      setModel((current) => applyWorkflow(current, workflow, profileRecords.current, favoriteAssignments.current, retainedAdHocProfileId.current))
+      return true
+    } catch {
+      showSettingFeedback({ status: 'error', message: 'That bag could not be selected.' })
+      return false
+    }
+  }
+
   const setFavoriteProfileSlot = async (profileId: string, slot: number) => {
     const profile = allProfiles.find((candidate) => candidate.id === profileId)
     if (!profile || slot < 0 || slot > 4) {
@@ -1416,5 +1438,5 @@ export function useBrewingData() {
   const dismissLiveBrew = () => setLiveBrew((current) => current.active ? current : { ...current, visible: false })
   const favoriteProfileIds = favoriteProfileSlots.filter((id): id is string => Boolean(id))
 
-  return { model, allProfiles, favoriteProfileIds, favoriteProfileSlots, liveBrew, utilityOperation, previousShotStatus, shotHistory, loadHistoryShot, heatingSeconds, connection, machineConnection, demoPullEnabled, scale, availableScales, scaleConnectPendingId, scaleTarePending, brewStopPending, brewSkipPending, cleaningStartPending, cleaningPreparedProfileId, sleepPending, sleepScreenActive, machineActionError, settingFeedback: settingFeedbackVisible ? settingFeedback : null, settingsDisabled, toggleSleep, wakeMachine, stopEspresso, skipBrewStage, startDemoBrew, prepareCleaningSequence, cancelCleaningSequence, dismissLiveBrew, searchForScale, connectToScale, dismissScalePicker, tareConnectedScale: () => requestScaleTare(false), updateMachineSetting, updateProfileSetting, profileRecordForEditing, saveProfileCopy, selectProfile, setFavoriteProfileSlot, removeFavoriteProfile }
+  return { model, allProfiles, favoriteProfileIds, favoriteProfileSlots, liveBrew, utilityOperation, previousShotStatus, shotHistory, loadHistoryShot, heatingSeconds, connection, machineConnection, demoPullEnabled, scale, availableScales, scaleConnectPendingId, scaleTarePending, brewStopPending, brewSkipPending, cleaningStartPending, cleaningPreparedProfileId, sleepPending, sleepScreenActive, machineActionError, settingFeedback: settingFeedbackVisible ? settingFeedback : null, settingsDisabled, toggleSleep, wakeMachine, stopEspresso, skipBrewStage, startDemoBrew, prepareCleaningSequence, cancelCleaningSequence, dismissLiveBrew, searchForScale, connectToScale, dismissScalePicker, tareConnectedScale: () => requestScaleTare(false), updateMachineSetting, updateProfileSetting, profileRecordForEditing, saveProfileCopy, selectProfile, setFavoriteProfileSlot, removeFavoriteProfile, selectBag }
 }
