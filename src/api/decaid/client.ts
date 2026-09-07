@@ -1,5 +1,5 @@
 import { getDecaidEndpoints } from './config'
-import type { DecaidDevice, DecaidMachineSettings, DecaidProfile, DecaidProfileRecord, DecaidSettings, DecaidWorkflow, DecaidWorkflowPatch, DisplayState, FavoriteAssignments, PaginatedShots, ScalePowerMode, ShotRecord } from './types'
+import type { Bean, BeanBatch, CreateBeanBatchInput, CreateBeanInput, DecaidDevice, DecaidMachineSettings, DecaidProfile, DecaidProfileRecord, DecaidSettings, DecaidWorkflow, DecaidWorkflowPatch, DisplayState, FavoriteAssignments, PaginatedShots, ScalePowerMode, ShotRecord, UpdateBeanBatchInput, UpdateBeanInput } from './types'
 
 export class DecaidApiError extends Error {
   status: number
@@ -92,6 +92,62 @@ export async function updateWorkflow(patch: DecaidWorkflowPatch) {
   })
   if (!response.ok) throw new Error(`Decaid workflow update returned ${response.status}: ${await response.text()}`)
   return await response.json() as DecaidWorkflow
+}
+
+export const getBeans = (includeArchived = false) => getJson<Bean[]>(`/beans${includeArchived ? '?includeArchived=true' : ''}`)
+
+export async function createBean(input: CreateBeanInput) {
+  const response = await fetch(`${getDecaidEndpoints().apiBase}/beans`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  if (!response.ok) throw new Error(`Decaid bean creation returned ${response.status}: ${await response.text()}`)
+  return await response.json() as Bean
+}
+
+export async function updateBean(id: string, patch: UpdateBeanInput) {
+  const response = await fetch(`${getDecaidEndpoints().apiBase}/beans/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch),
+  })
+  if (!response.ok) throw new Error(`Decaid bean update returned ${response.status}: ${await response.text()}`)
+  return await response.json() as Bean
+}
+
+export async function deleteBean(id: string) {
+  const response = await fetch(`${getDecaidEndpoints().apiBase}/beans/${encodeURIComponent(id)}`, { method: 'DELETE' })
+  if (!response.ok) throw new Error(`Decaid bean deletion returned ${response.status}`)
+}
+
+export const getBeanBatches = (beanId: string, includeArchived = false) => getJson<BeanBatch[]>(`/beans/${encodeURIComponent(beanId)}/batches${includeArchived ? '?includeArchived=true' : ''}`)
+
+export async function createBeanBatch(beanId: string, input: CreateBeanBatchInput) {
+  const response = await fetch(`${getDecaidEndpoints().apiBase}/beans/${encodeURIComponent(beanId)}/batches`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  })
+  if (!response.ok) throw new Error(`Decaid batch creation returned ${response.status}: ${await response.text()}`)
+  return await response.json() as BeanBatch
+}
+
+export const getAllBeanBatches = (includeArchived = false) => getJson<BeanBatch[]>(`/bean-batches${includeArchived ? '?includeArchived=true' : ''}`)
+
+export async function updateBeanBatch(id: string, patch: UpdateBeanBatchInput) {
+  const response = await fetch(`${getDecaidEndpoints().apiBase}/bean-batches/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch),
+  })
+  if (!response.ok) throw new Error(`Decaid batch update returned ${response.status}: ${await response.text()}`)
+  return await response.json() as BeanBatch
+}
+
+export async function deleteBeanBatch(id: string) {
+  const response = await fetch(`${getDecaidEndpoints().apiBase}/bean-batches/${encodeURIComponent(id)}`, { method: 'DELETE' })
+  if (!response.ok) throw new Error(`Decaid batch deletion returned ${response.status}`)
 }
 
 export async function updateProfileMetadata(profileId: string, metadata: Record<string, unknown>) {

@@ -1,7 +1,7 @@
-import type { BrewProfile, BrewingScreenModel, PreviousShot, ProfileTargetPoint } from '../../domain/brewing'
-import { isSteamHeatingEnabled } from '../../features/machine/steamHeating'
-import { profileConfiguredTargetYield, profileTargetYield } from './profileWorkflow'
-import type { DecaidProfileRecord, DecaidProfileStep, DecaidWorkflow, FavoriteAssignments, ShotRecord } from './types'
+import type { ActiveBag, BrewProfile, BrewingScreenModel, PreviousShot, ProfileTargetPoint } from '../../domain/brewing.ts'
+import { isSteamHeatingEnabled } from '../../features/machine/steamHeating.ts'
+import { profileConfiguredTargetYield, profileTargetYield } from './profileWorkflow.ts'
+import type { DecaidProfileRecord, DecaidProfileStep, DecaidWorkflow, DecaidWorkflowContext, FavoriteAssignments, ShotRecord } from './types.ts'
 
 const MM_TO_ML = [0,16,43,70,97,124,151,179,206,233,261,288,316,343,371,398,426,453,481,509,537,564,592,620,648,676,704,732,760,788,816,844,872,900,929,957,985,1013,1042,1070,1104,1138,1172,1207,1242,1277,1312,1347,1382,1417,1453,1488,1523,1559,1594,1630,1665,1701,1736,1772,1808,1843,1879,1915,1951,1986,2022,2058]
 export const STEAM_HEATER_READY_C = 130
@@ -181,6 +181,14 @@ export function retainedAdHocProfileAtBrewStart(activeProfileId: string | undefi
   return retainedAdHocProfileId && activeProfileId === retainedAdHocProfileId ? retainedAdHocProfileId : null
 }
 
+export function activeBagFromContext(context: DecaidWorkflowContext | undefined): ActiveBag | null {
+  const beanBatchId = context?.beanBatchId
+  const coffeeName = context?.coffeeName
+  const coffeeRoaster = context?.coffeeRoaster
+  if (!beanBatchId || !coffeeName || !coffeeRoaster) return null
+  return { beanBatchId, coffeeName, coffeeRoaster }
+}
+
 export function applyWorkflow(model: BrewingScreenModel, workflow: DecaidWorkflow, records: DecaidProfileRecord[], assignments: FavoriteAssignments | null = null, retainedAdHocProfileId?: string | null) {
   const allProfiles = profileRecordsToDomain(records, workflow, model.profiles)
   const active = activeProfileForWorkflow(allProfiles, records, workflow)
@@ -204,7 +212,7 @@ export function applyWorkflow(model: BrewingScreenModel, workflow: DecaidWorkflo
     }
     return utility
   })
-  return { ...model, profiles, activeProfileId: active?.id ?? profiles[0]?.id, utilities }
+  return { ...model, profiles, activeProfileId: active?.id ?? profiles[0]?.id, activeBag: activeBagFromContext(workflow.context), utilities }
 }
 
 export function tankMillilitres(level: number) {

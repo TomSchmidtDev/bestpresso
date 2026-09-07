@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, KeyboardEvent, PointerEvent } from 'react'
 import { Metric } from '../../components/Metric/Metric'
-import type { BrewProfile, EditableProfileSetting } from '../../domain/brewing'
+import type { ActiveBag, BrewProfile, EditableProfileSetting } from '../../domain/brewing'
 import type { FixedValueSuggestion } from '../../domain/valueAdjustments'
 import { VALUE_ADJUSTMENTS } from '../../domain/valueAdjustments'
 import { doseToYieldRatio } from './brewRatio'
 import { DEMO_PROFILE_LONG_PRESS_MS } from './demoBrew'
 import { ProfileTargetChart } from './ProfileTargetChart'
+import { BagBar } from '../bag/BagBar'
 import { profileCardMotion, profileCardPosition, projectedProfileSteps, wrappedProfileOffset } from './profileCarouselMotion'
 
 interface CarouselDrag {
@@ -19,7 +20,7 @@ interface CarouselDrag {
   moved: boolean
 }
 
-export function BrewingPanel({ profiles, activeProfileId, settingsDisabled, demoMode = false, onUpdateProfile, onSelectProfile, onStartDemoBrew, onManageProfiles }: { profiles: BrewProfile[]; activeProfileId?: string; settingsDisabled?: boolean; demoMode?: boolean; onUpdateProfile: (profileId: string, setting: EditableProfileSetting, value: number) => void; onSelectProfile: (profileId: string) => Promise<boolean>; onStartDemoBrew?: (profileId: string) => void; onManageProfiles: () => void }) {
+export function BrewingPanel({ profiles, activeProfileId, activeBag, activeBagRoastDate, settingsDisabled, demoMode = false, onUpdateProfile, onSelectProfile, onStartDemoBrew, onManageProfiles, onOpenBagPicker }: { profiles: BrewProfile[]; activeProfileId?: string; activeBag?: ActiveBag | null; activeBagRoastDate?: string | null; settingsDisabled?: boolean; demoMode?: boolean; onUpdateProfile: (profileId: string, setting: EditableProfileSetting, value: number) => void; onSelectProfile: (profileId: string) => Promise<boolean>; onStartDemoBrew?: (profileId: string) => void; onManageProfiles: () => void; onOpenBagPicker: () => void }) {
   const selectedIndex = profiles.findIndex((profile) => profile.id === activeProfileId)
   const fallbackIndex = profiles.findIndex((profile) => profile.id === 'adaptive-v2')
   const initialIndex = Math.max(0, selectedIndex >= 0 ? selectedIndex : fallbackIndex)
@@ -181,6 +182,7 @@ export function BrewingPanel({ profiles, activeProfileId, settingsDisabled, demo
       })}
     </div>
     <button className="manage-profiles" type="button" onClick={onManageProfiles}>See all profiles →</button>
+    <BagBar activeBag={activeBag} activeBagRoastDate={activeBagRoastDate} onOpen={onOpenBagPicker} />
     <div className="brew-metrics" aria-live="polite">
       <Metric metric={{ label: 'Temp.', value: activeProfile.temperature, unit: '°' }} edit={editProfileSetting('temperature')} />
       <Metric metric={{ label: 'Grind size', value: activeProfile.grindSetting }} edit={editProfileSetting('grindSetting')} />

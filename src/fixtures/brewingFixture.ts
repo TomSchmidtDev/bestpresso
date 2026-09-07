@@ -1,4 +1,5 @@
 import type { BrewingScreenModel, LiveBrewState, LiveShotPoint } from '../domain/brewing'
+import type { Bean, BeanBatch } from '../domain/bag'
 
 export const demoShotPoints: LiveShotPoint[] = [
   { elapsedMs: 0, stageIndex: 0, stageName: 'Preinfusion', pressure: 0, flow: 4.1, targetPressure: 2, targetFlow: 4, temperature: 88, weight: 0 },
@@ -42,9 +43,23 @@ export const demoLiveBrewFixture: LiveBrewState = {
   points: demoShotPoints,
 }
 
+const FIXTURE_ROAST_DATE = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString()
+
+export const bagFixture: { beans: Bean[]; batches: BeanBatch[] } = {
+  beans: [
+    { id: 'fixture-bean-1', roaster: 'Rüst & Ruh', name: 'Kenia Peaberry', species: 'arabica', decaf: false, country: 'Kenya', region: 'Nyeri', producer: null, variety: ['SL28', 'SL34'], altitude: [1750, 1950], processing: 'washed', notes: 'Blackcurrant, brown sugar, bright acidity.', archived: false, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+    { id: 'fixture-bean-2', roaster: 'Bonanza Coffee', name: 'Ethiopia Guji Washed', species: 'arabica', decaf: false, country: 'Ethiopia', region: 'Guji', producer: null, variety: ['Heirloom'], altitude: [1900, 2100], processing: 'washed', notes: null, archived: false, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+  ],
+  batches: [
+    { id: 'fixture-batch-1', beanId: 'fixture-bean-1', roastDate: FIXTURE_ROAST_DATE, roastLevel: 'medium-light', harvestDate: null, qualityScore: 87.5, price: 16.5, currency: 'EUR', weight: 250, weightRemaining: 180, buyDate: null, openDate: null, bestBeforeDate: null, freezeDate: null, unfreezeDate: null, frozen: false, archived: false, notes: null, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+    { id: 'fixture-batch-2', beanId: 'fixture-bean-2', roastDate: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(), roastLevel: 'light', harvestDate: null, qualityScore: null, price: null, currency: null, weight: 250, weightRemaining: 250, buyDate: null, openDate: null, bestBeforeDate: null, freezeDate: null, unfreezeDate: null, frozen: false, archived: false, notes: null, createdAt: '2026-01-01T00:00:00Z', updatedAt: '2026-01-01T00:00:00Z' },
+  ],
+}
+
 export const brewingFixture: BrewingScreenModel = {
   readiness: 'ready',
   activeProfileId: 'adaptive-v2',
+  activeBag: { beanBatchId: 'fixture-batch-1', coffeeName: 'Kenia Peaberry', coffeeRoaster: 'Rüst & Ruh' },
   utilities: [
     { id: 'water', label: 'Hot water', metrics: [{ label: 'Volume', value: '50', unit: 'ml' }, { label: 'Temperature', value: '92', unit: '°' }] },
     { id: 'steam', label: 'Steam', enabled: true, metrics: [{ label: 'Current', value: '121', unit: '°', highlight: true }, { label: 'Target', value: '160', unit: '°' }, { label: 'Duration', value: '50', unit: 's' }, { label: 'Flow', value: '0.6', unit: 'ml/s' }] },

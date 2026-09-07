@@ -33,7 +33,7 @@ export interface DecaidProfile {
 }
 export interface DecaidProfileRecord { id?: string; parentId?: string | null; profile?: DecaidProfile; visibility?: string; metadata?: Record<string, unknown> | null; isDefault?: boolean }
 export type FavoriteAssignments = Record<string, string | null>
-export interface DecaidWorkflowContext { targetDoseWeight?: number | null; targetYield?: number | null; grinderSetting?: string | null }
+export interface DecaidWorkflowContext { targetDoseWeight?: number | null; targetYield?: number | null; grinderSetting?: string | null; beanBatchId?: string | null; coffeeName?: string | null; coffeeRoaster?: string | null }
 export interface DecaidWorkflow {
   name?: string
   profile?: DecaidProfile
@@ -81,3 +81,51 @@ export interface ShotMeasurement {
 }
 export interface ShotRecord { id?: string; timestamp?: string; workflow?: DecaidWorkflow; measurements?: ShotMeasurement[]; annotations?: { actualYield?: number }; stopReason?: string | null }
 export interface PaginatedShots { items: ShotRecord[]; total: number; limit: number; offset: number }
+
+export interface Bean {
+  id: string
+  roaster: string
+  name: string
+  species?: string | null
+  decaf: boolean
+  decafProcess?: string | null
+  country?: string | null
+  region?: string | null
+  producer?: string | null
+  variety?: string[] | null
+  altitude?: [number, number] | null
+  processing?: string | null
+  notes?: string | null
+  archived: boolean
+  createdAt: string
+  updatedAt: string
+  extras?: Record<string, unknown> | null
+}
+export type CreateBeanInput = Pick<Bean, 'roaster' | 'name'> & Partial<Pick<Bean, 'species' | 'decaf' | 'decafProcess' | 'country' | 'region' | 'producer' | 'variety' | 'altitude' | 'processing' | 'notes' | 'extras'>>
+export type UpdateBeanInput = Partial<Omit<Bean, 'id' | 'createdAt' | 'updatedAt'>>
+
+export interface BeanBatch {
+  id: string
+  beanId: string
+  roastDate?: string | null
+  roastLevel?: string | null
+  harvestDate?: string | null
+  qualityScore?: number | null
+  price?: number | null
+  currency?: string | null
+  weight?: number | null
+  weightRemaining?: number | null
+  buyDate?: string | null
+  openDate?: string | null
+  bestBeforeDate?: string | null
+  freezeDate?: string | null
+  unfreezeDate?: string | null
+  frozen: boolean
+  archived: boolean
+  notes?: string | null
+  createdAt: string
+  updatedAt: string
+  extras?: Record<string, unknown> | null
+}
+export type CreateBeanBatchInput = Partial<Omit<BeanBatch, 'id' | 'beanId' | 'weightRemaining' | 'archived' | 'createdAt' | 'updatedAt'>>
+export type UpdateBeanBatchInput = Partial<Omit<BeanBatch, 'id' | 'beanId' | 'createdAt' | 'updatedAt'>>
